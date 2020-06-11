@@ -205,7 +205,7 @@ class Component(KBCEnvHandler):
                 # row_value=row[obj],
                 row_value=df[obj],
                 required=required)
-            if not err_msg:
+            if err_msg != '':
                 construct_bool = False
                 return construct_bool, err_msg
             request_body[endpoint[:-1]].update(tmp_obj)
@@ -480,7 +480,7 @@ class Component(KBCEnvHandler):
                             tmp_log = self._construct_log(
                                 endpoint=endpoint,
                                 request_bool=False,
-                                request_body=request_response,
+                                request_body=request_body,
                                 row_df=row
                             )
 

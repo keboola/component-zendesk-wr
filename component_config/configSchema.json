@@ -1,0 +1,59 @@
+{
+    "type": "object",
+    "title": "Configuration",
+    "required": [
+        "email",
+        "#password",
+        "domain",
+        "full_url",
+        "function"
+    ],
+    "properties": {
+        "email": {
+            "type": "string",
+            "title": "Login Email",
+            "propertyOrder": 100,
+            "minLength": 1
+        },
+        "#password": {
+            "type": "string",
+            "title": "Password",
+            "format": "password",
+            "propertyOrder": 200,
+            "minLength": 1
+        },
+        "domain": {
+            "type": "string",
+            "title": "Zendesk Domain",
+            "default": "DOMAIN",
+            "propertyOrder": 300,
+            "minLength": 1
+        },
+        "full_url": {
+            "type": "string",
+            "title": "Zendesk URL",
+            "template": "https://{{domain}}.zendesk.com",
+            "watch": {
+                "domain": "domain"
+            },
+            "description": "This is generated automatically from 'Zendesk Domain'.",
+            "propertyOrder": 400
+        },
+        "function": {
+            "type": "string",
+            "title": "Function",
+            "propertyOrder": 500,
+            "enum": [
+                "CREATE",
+                "UPDATE"
+            ],
+            "options": {
+                "enum_titles": [
+                    "CREATE",
+                    "UPDATE"
+                ]
+            },
+            "default": "CREATE"
+        }
+    }
+}

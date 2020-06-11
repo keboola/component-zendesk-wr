@@ -1,0 +1,140 @@
+{
+    "users": {
+        "create_required": [
+            "name"
+        ],
+        "update_required": [
+            "id"
+        ],
+        "attributes": {
+            "id": {"type": "integer", "read_only": true},
+            "email": {"type": "string"},
+            "name": {"type": "string"},
+            "active": {"type": "boolean", "read_only": true},
+            "alias": {"type": "string"},
+            "chat_only": {"type": "boolean", "read_only": true},
+            "created_at": {"type": "date", "read_only": true},
+            "custom_role_id": {"type": "integer"},
+            "role_type": {"type": "integer", "read_only": true},
+            "details": {"type": "string"},
+            "external_id": {"type": "string"},
+            "last_login_at": {"type": "date", "read_only": true},
+            "locale": {"type": "string"},
+            "locale_id": {"type": "integer"},
+            "moderator": {"type": "boolean"},
+            "notes": {"type": "string"},
+            "only_private_comments": {"type": "boolean"},
+            "organization_id": {"type": "integer"},
+            "default_group_id": {"type": "integer"},
+            "phone": {"type": "string"},
+            "shared_phone_number": {"type": "boolean", "read_only": true},
+            "photo": {"type": "attachment"},
+            "restricted_agent": {"type": "boolean"},
+            "role": {"type": "string"},
+            "shared": {"type": "boolean", "read_only": true},
+            "shared_agent": {"type": "boolean", "read_only": true},
+            "signature": {"type": "string"},
+            "suspended": {"type": "boolean"},
+            "tags": {"type": "array"},
+            "ticket_restriction": {"type": "string"},
+            "time_zone": {"type": "string"},
+            "two_factor_auth_enabled": {"type": "boolean", "read_only": true},
+            "updated_at": {"type": "date", "read_only": true},
+            "url": {"type": "string", "read_only": true},
+            "user_fields": {"type": "object"},
+            "verified": {"type": "boolean"},
+            "report_csv": {"type": "boolean", "read_only": true}
+        }
+    },
+    "groups": {
+        "create_required": [
+            "name"
+        ],
+        "update_required": [
+            "id"
+        ],
+        "attributes": {
+            "id": {"type": "integer", "read_only": true},
+            "url": {"type": "string", "read_only": true},
+            "name": {"type": "string"},
+            "description": {"type": "string"},
+            "default": {"type": "boolean", "read_only": true},
+            "deleted": {"type": "boolean", "read_only": true},
+            "created_at": {"type": "date", "read_only": true},
+            "updated_at": {"type": "date", "read_only": true}
+        }
+    },
+    "organizations": {
+        "create_required": [
+            "name"
+        ],
+        "update_required": [
+            "id"
+        ],
+        "attributes": {
+            "id": {"type": "integer", "read_only": true},
+            "url": {"type": "string", "read_only": true},
+            "external_id": {"type": "string"},
+            "name": {"type": "string"},
+            "created_at": {"type": "date", "read_only": true},
+            "updated_at": {"type": "date", "read_only": true},
+            "domain_names": {"type": "array"},
+            "details": {"type": "string"},
+            "notes": {"type": "string"},
+            "group_id": {"type": "integer"},
+            "shared_tickets": {"type": "boolean"},
+            "shared_comments": {"type": "boolean"},
+            "tags": {"type": "array"},
+            "organization_fields": {"type": "object"}
+        }
+    },
+    "tickets": {
+        "create_required": [
+            "comment"
+        ],
+        "update_required": [
+            "id"
+        ],
+        "attributes": {
+            "id": {"type": "integer", "read_only": true},
+            "url": {"type": "string", "read_only": true},
+            "external_id": {"type": "string"},
+            "type": {"type": "string"},
+            "subject": {"type": "string"},
+            "raw_subject": {"type": "string"},
+            "description": {"type": "string", "read_only": true},
+            "comment": {"type": "object"},
+            "priority": {"type": "string"},
+            "status": {"type": "string"},
+            "recipient": {"type": "string"},
+            "requester_id": {"type": "integer"},
+            "submitter_id": {"type": "integer"},
+            "assignee_id": {"type": "integer"},
+            "organization_id": {"type": "integer"},
+            "group_id": {"type": "integer"},
+            "collaborator_ids": {"type": "array"},
+            "collaborators": {"type": "array"},
+            "email_cc_ids": {"type": "array"},
+            "follower_ids": {"type": "array"},
+            "forum_topic_id": {"type": "integer", "read_only": true},
+            "problem_id": {"type": "integer"},
+            "has_incidents": {"type": "boolean", "read_only": true},
+            "due_at": {"type": "date"},
+            "tags": {"type": "array"},
+            "via": {"type": "via", "read_only": true},
+            "custom_fields": {"type": "array"},
+            "satisfaction_rating": {"type": "object", "read_only": true},
+            "sharing_agreement_ids": {"type": "array", "read_only": true},
+            "followup_ids": {"type": "array", "read_only": true},
+            "via_followup_source_id": {"type": "integer"},
+            "macro_ids": {"type": "array"},
+            "ticket_form_id": {"type": "integer"},
+            "brand_id": {"type": "integer"},
+            "allow_channelback": {"type": "boolean", "read_only": true},
+            "allow_attachments": {"type": "boolean", "read_only": true},
+            "is_public": {"type": "boolean", "read_only": true},
+            "created_at": {"type": "date", "read_only": true},
+            "updated_at": {"type": "date", "read_only": true}
+        }
+    }
+}

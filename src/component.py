@@ -178,7 +178,6 @@ class Component(KBCEnvHandler):
                 elif datatype_type == 'boolean':
                     tmp_obj[row_name] = bool(row_value)
             except Exception as err:
-                tmp_obj = False
                 err_msg = err
                 logging.error(err_msg)
 
@@ -248,7 +247,7 @@ class Component(KBCEnvHandler):
                     endpoint_attributes_check = False
 
             if not endpoint_attributes_check:
-                err_msg = 'Input Columns are not supported for [{}]: {}'.format(
+                err_msg = 'Input columns not supported [{}]: {}'.format(
                     endpoint, non_exist_attributes)
                 logging.error(err_msg)
                 validate_bool = False
@@ -273,7 +272,8 @@ class Component(KBCEnvHandler):
             # 'file_validation_description': '',
             'request_bool': request_bool,
             'request_status': request_status,
-            'request_body': json.dumps(request_body[endpoint[:-1]]),
+            # 'request_body': json.dumps(request_body[endpoint[:-1]])
+            'request_body': json.dumps(request_body)
             # 'request_response': json.dumps(request_response[endpoint[:-1]])
         }
         if request_status in [200, 201]:
@@ -342,7 +342,7 @@ class Component(KBCEnvHandler):
         '''
 
         log_df = pd.DataFrame(log)
-        output_filename = '{}/{}_{}_log.csv'.format(
+        output_filename = '{0}{1}_{2}_log.csv'.format(
             DEFAULT_TABLE_DESTINATION, endpoint, self.function.lower())
 
         if self.function == 'CREATE':
@@ -429,13 +429,13 @@ class Component(KBCEnvHandler):
             for chunks in pd.read_csv(DEFAULT_TABLE_SOURCE+table, chunksize=100):
                 log = []
                 input_headers = list(chunks.columns)
-                # Validate input file
+                # Validate Input files headers
                 input_valid_bool, err_msg = self._validate_endpoint_headers(
                     endpoint=endpoint,
                     input_headers=input_headers,
                     endpoint_mapping=endpoint_mapping)
 
-                # Checking if all the input headers are valid
+                # Break for loop if input file is not valid
                 if not input_valid_bool:
                     tmp_log = self._construct_log(
                         endpoint=endpoint,
@@ -444,6 +444,8 @@ class Component(KBCEnvHandler):
                     )
                     log.append(tmp_log)
                     # Breaking current's endpoint for loop
+                    # and Output the log for the current table
+                    self.output_log(log, endpoint)
                     break
 
                 else:
@@ -472,7 +474,7 @@ class Component(KBCEnvHandler):
                                 endpoint=endpoint,
                                 request_bool=True,
                                 request_status=request_status,
-                                request_body=request_body,
+                                request_body=request_body[endpoint[:-1]],
                                 request_response=request_response,
                                 row_df=row
                             )
@@ -480,7 +482,7 @@ class Component(KBCEnvHandler):
                             tmp_log = self._construct_log(
                                 endpoint=endpoint,
                                 request_bool=False,
-                                request_body=request_body,
+                                request_body=request_body[endpoint[:-1]],
                                 row_df=row
                             )
 

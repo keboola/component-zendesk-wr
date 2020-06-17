@@ -282,7 +282,8 @@ class Component(KBCEnvHandler):
         Generating Base64 authentication header
         '''
 
-        auth_string = '{}:{}'.format(email, password)
+        # auth_string = '{}:{}'.format(email, password)
+        auth_string = '{}/token:{}'.format(email, password)
         auth_string_encode = base64.b64encode(auth_string.encode()).decode()
 
         header = {

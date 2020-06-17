@@ -1,9 +1,12 @@
 # Keboola Zendesk Writer
 
-With user's defined parameters in the inputs, the component will create or update the relative endpoint objects in the Zendesk API. 
+Zendesk Writer enables users to create/update Zendesk Support API properties with the flexibility of defining their own parameters.
 
-## Configurations
-The component takes tables from the input mapping and create/updates records in Zendesk API. The table names from the input mapping will be used to define the Zendesk object the users wish to create/update. Example: users.csv will be creating/updating Zendesk's User endpoint. 
+To configure the writer, you need:
+
+- provide Zendesk credentials and domain
+- Have the Zendesk Support API endpoints you want to create/update, please visit [Zendesk](https://developer.zendesk.com/rest_api/docs/support/introduction) for more details
+- Understand the format required for the parameters you wish to create/update for your endpoints
 
 ## Configuration Parameters
 1. Login Email
@@ -21,15 +24,23 @@ The component takes tables from the input mapping and create/updates records in 
     - UPDATE
         - Performing `PUT` request to the endpoints defined
 
+## Endpoint Specifications
+The table names from the input mapping will be used to define the Zendesk endpoint the users wish to perform the specified `Function` (CREATE/UPDATE).
+Example: users.csv will be creating/updating Zendesk's User endpoint.
+
 ## Supported Endpoints
-1. users
-2. tickets
-    - Input account will be used as the requester_id. If user wants to alter this parameter, please perform such action via `UPDATE` request.
-3. organizations
-4. groups
+1. [users](https://developer.zendesk.com/rest_api/docs/support/users)
+2. [tickets](https://developer.zendesk.com/rest_api/docs/support/tickets)
+    - Account inputted in the configuration will be used as the requester_id. If user wants to alter the request_id, please perform such action via `UPDATE` request.
+3. [organizations](https://developer.zendesk.com/rest_api/docs/support/organizations)
+4. [groups](https://developer.zendesk.com/rest_api/docs/support/groups)
+5. [ticket_fields](https://developer.zendesk.com/rest_api/docs/support/ticket_fields)
+6. [organization_fields](https://developer.zendesk.com/rest_api/docs/support/organization_fields)
+7. [user_fields](https://developer.zendesk.com/rest_api/docs/support/user_fields)
+
+*Please visit [Endpoint Parameters](https://bitbucket.org/kds_consulting_team/kds-team.wr-zendesk/src/master/docs/endpoint_parameters.md) for list of supported parameters and required parameters*
 
 All columns from the input mappings will be converted as a request parameter object for the API request and they need to be valid for the supported endpoint. Each combinatino of function and endpoint contains required parameters for the API request. <br>
-List of supported parameters and required parameters for each endpoints can be found in [Endpoint Parameters](https://bitbucket.org/kds_consulting_team/kds-team.wr-zendesk/src/master/docs/endpoint_parameters.md) <br>
 For `CREATE` requests, the input tables need to contain columns defined in the `CREATE_required` fields. <br>
 For `UPDATE` requests, the input tables need to contain columsn defined in the `UPDATE_required` fields.
 

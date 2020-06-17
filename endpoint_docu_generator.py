@@ -1,5 +1,12 @@
 import json
 
+'''
+A endpoint parameter template generator
+If you have any changes for the endpoints, please apply it into
+src/endpoint_mapping.json
+Running this component will update the docs/endpoint_parameters.md
+'''
+
 with open('src/endpoint_mapping.json') as f:
     endpoints = json.load(f)
 
@@ -24,4 +31,4 @@ with open('docs/endpoint_parameters.md', 'w') as f:
             )
             f.write(line)
 
-        f.write('\n')
+        f.write('\n\n')

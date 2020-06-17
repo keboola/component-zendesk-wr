@@ -1,4 +1,3 @@
-# Endpoint Parameters
 ## users 
 | Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
 |-|-|-|-|-|-|
@@ -115,4 +114,77 @@
 | is_public |  |  | True | boolean | Is true if any comments are public, false otherwise |
 | created_at |  |  | True | date | When this record was created |
 | updated_at |  |  | True | date | When this record last got updated |
+
+
+## ticket_fields 
+| Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
+|-|-|-|-|-|-|
+| id |  | True | True | integer | Automatically assigned when created |
+| url |  |  | True | string | The URL for this resource |
+| type | True |  |  | string | System or custom field type. *Editable for custom field types and only on creation. Please visit [Create Ticket Field](https://developer.zendesk.com/rest_api/docs/support/ticket_fields#create-ticket-field) for list of supported field types. |
+| title | True |  |  | string | The title of the ticket field |
+| raw_title |  |  |  | string | The dynamic content placeholder if present, or the "title" value if not |
+| description |  |  |  | string | Describes the purpose of the ticket field to users |
+| raw_description |  |  |  | string | The dynamic content placeholder if present, or the "description" value if not |
+| position |  |  |  | integer | The relative position of the ticket field on a ticket. Note that for accounts with ticket forms, positions are controlled by the different forms |
+| active |  |  |  | boolean | Whether this field is available |
+| required |  |  |  | boolean | If true, agents must enter a value in the field to change the ticket status to solved |
+| collapsed_for_agents |  |  |  | boolean | If true, the field is shown to agents by default. If false, the field is hidden alongside infrequently used fields. Classic interface only |
+| regexp_for_validation |  |  |  | string | For "regexp" fields only. The validation pattern for a field value to be deemed valid |
+| title_in_portal |  |  |  | string | The title of the ticket field is mandatory when the field is visible to end users in Help Center |
+| raw_title_in_portal |  |  |  | string | The dynamic content placeholder if present, or the "title_in_portal" value if not. |
+| visible_in_portal |  |  |  | boolean | Whether this field is visible to end users in Help Center |
+| editable_in_portal |  |  |  | boolean | Whether this field is editable by end users in Help Center |
+| required_in_portal |  |  |  | boolean | If true, end users must enter a value in the field to create the request |
+| tag |  |  |  | string | For "checkbox" fields only. A tag added to tickets when the checkbox field is selected |
+| created_at |  |  | True | date | The time the custom ticket field was created |
+| updated_at |  |  | True | date | The time the custom ticket field was last updated |
+| system_field_options |  |  | True | array | Presented for a system ticket field of type "tickettype", "priority" or "status" |
+| custom_field_options |  |  |  | array | Required and presented for a custom ticket field of type "multiselect" or "tagger" |
+| sub_type_id |  |  |  | integer | For system ticket fields of type "priority" and "status". Defaults to 0. A "priority" sub type of 1 removes the "Low" and "Urgent" options. A "status" sub type of 1 adds the "On-Hold" option |
+| removable |  |  | True | boolean | If false, this field is a system field that must be present on all tickets |
+| agent_description |  |  | True | string | A description of the ticket field that only agents can see |
+
+
+## organization_fields 
+| Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
+|-|-|-|-|-|-|
+| id |  | True | True | integer | Automatically assigned upon creation |
+| url |  |  | True | string | The URL for this resource |
+| key | True |  |  | string | A unique key that identifies this custom field. This is used for updating the field and referencing in placeholders |
+| type | True |  |  | string | Type of the custom field: "checkbox", "date", "decimal", "dropdown", "integer", "regexp", "text", or "textarea" |
+| title | True |  |  | string | The title of the custom field |
+| raw_title |  |  |  | string | The dynamic content placeholder, if present, or the "title" value, if not.  |
+| description |  |  |  | string | User-defined description of this field's purpose |
+| raw_description |  |  |  | string | The dynamic content placeholder, if present, or the "description" value, if not.  |
+| position |  |  |  | integer | Ordering of the field relative to other fields |
+| active |  |  |  | boolean | If true, this field is available for use |
+| system |  |  | True | boolean | If true, only active and position values of this field can be changed |
+| regexp_for_validation |  |  |  | string | Regular expression field only. The validation pattern for a field value to be deemed valid |
+| created_at |  |  | True | date | The time the ticket field was created |
+| updated_at |  |  | True | date | The time of the last update of the ticket field |
+| tag |  |  |  | string | Optional for custom field of type "checkbox"; not presented otherwise |
+| custom_field_options |  |  |  | array | Required and presented for a custom field of type "dropdown" |
+
+
+## user_fields 
+| Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
+|-|-|-|-|-|-|
+| id |  | True | True | integer | Automatically assigned upon creation |
+| url |  |  | True | string | The URL for this resource |
+| key | True |  |  | string | A unique key that identifies this custom field. This is used for updating the field and referencing in placeholders. |
+| type | True |  |  | string | Type of the custom field: "checkbox", "date", "decimal", "dropdown", "integer", "regexp", "text", or "textarea" |
+| title | True |  |  | string | The title of the custom field |
+| raw_title |  |  |  | string | The dynamic content placeholder, if present, or the "title" value, if not.  |
+| description |  |  |  | string | User-defined description of this field's purpose |
+| raw_description |  |  |  | string | The dynamic content placeholder, if present, or the "description" value, if not.  |
+| position |  |  |  | integer | Ordering of the field relative to other fields |
+| active |  |  |  | boolean | If true, this field is available for use |
+| system |  |  | True | boolean | If true, only active and position values of this field can be changed |
+| regexp_for_validation |  |  |  | string | Regular expression field only. The validation pattern for a field value to be deemed valid. |
+| created_at |  |  | True | date | The time the ticket field was created |
+| updated_at |  |  | True | date | The time of the last update of the ticket field |
+| tag |  |  |  | string | Optional for custom field of type "checkbox"; not presented otherwise |
+| custom_field_options |  |  |  | array | Required and presented for a custom field of type "dropdown" |
+
 

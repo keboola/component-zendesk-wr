@@ -1,1 +1,1 @@
-Testing functional sample extractor for purposes of the python component template. 
+Creating or updating the relative endpoint objects in the Zendesk API with users' defined input parameters

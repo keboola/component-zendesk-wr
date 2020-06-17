@@ -48,18 +48,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)-8s : [line:%(lineno)3s] %(message)s',
     datefmt="%Y-%m-%d %H:%M:%S")
-# To find out the list of import libraries
-# logging.basicConfig(
-#    level=logging.INFO,
-#    format='%(asctime)s - %(name)-20s %(levelname)-8s : [line:%(lineno)3s] %(message)s',
-#    datefmt="%Y-%m-%d %H:%M:%S")
-# for v in logging.Logger.manager.loggerDict:
-#     print(v)
-# sys.exit(0)
-# Disabling list of libraries you want to output in the logger
-disable_libraries = []
-for library in disable_libraries:
-    logging.getLogger(library).disabled = True
 
 if 'KBC_LOGGER_ADDR' in os.environ and 'KBC_LOGGER_PORT' in os.environ:
 

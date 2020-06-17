@@ -1,6 +1,3 @@
-The component takes tables from the input mapping and create/updates records in Zendesk API. The table names from the input mapping will be used to define the Zendesk object the users wish to create/update. Example: users.csv will be creating/updating Zendesk's User endpoint. 
-
-## Configuration Parameters
 1. Login Email
     - Zendesk account login email
 2. Password

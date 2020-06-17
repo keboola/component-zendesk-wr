@@ -39,7 +39,8 @@
 | user_fields |  |  |  | object | Values of custom fields in the user's profile. See [User Fields](https://developer.zendesk.com/rest_api/docs/support/users#user-fields) |
 | verified |  |  |  | boolean | The user's primary identity is verified or not. For secondary identities, see [User Identities](https://developer.zendesk.com/rest_api/docs/support/user_identities) |
 | report_csv |  |  | True | boolean | Whether or not the user can access the CSV report on the Search tab of the Reporting page in the Support admin interface |
-----
+
+
 ## groups 
 | Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
 |-|-|-|-|-|-|
@@ -51,7 +52,8 @@
 | deleted |  |  | True | boolean | Deleted groups get marked as such |
 | created_at |  |  | True | date | The time the group was created |
 | updated_at |  |  | True | date | The time of the last update of the group |
-----
+
+
 ## organizations 
 | Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
 |-|-|-|-|-|-|
@@ -69,7 +71,8 @@
 | shared_comments |  |  |  | boolean | End users in this organization are able to see each other's comments on tickets |
 | tags |  |  |  | array | The tags of the organization |
 | organization_fields |  |  |  | object | Custom fields for this organization |
-----
+
+
 ## tickets 
 | Parameter | CREATE required | UPDATE required | ReadOnly |DataType | Description |
 |-|-|-|-|-|-|
@@ -113,4 +116,3 @@
 | created_at |  |  | True | date | When this record was created |
 | updated_at |  |  | True | date | When this record last got updated |
 
-----

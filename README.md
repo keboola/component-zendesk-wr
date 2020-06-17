@@ -11,8 +11,9 @@ To configure the writer, you need:
 ## Configuration Parameters
 1. Login Email
     - Zendesk account login email
-2. Password
-    - Zendesk account password
+2. API Token
+    - Zendesk account API token
+    - You can obtain API tokens from the Zendesk Support admin interface at Admin > Channels > API
 3. Zendesk Domain
     - The domain of the Zendesk instance
 4. Zendesk URL

@@ -21,14 +21,14 @@ from kbc.result import ResultWriter  # noqa
 
 # configuration variables
 KEY_EMAIL = 'email'
-KEY_PASSWORD = '#password'
+KEY_API_TOKEN = '#api_token'
 KEY_DOMAIN = 'domain'
 KEY_FULL_URL = 'full_url'
 KEY_FUNCTION = 'function'
 
 MANDATORY_PARS = [
     KEY_EMAIL,
-    KEY_PASSWORD,
+    KEY_API_TOKEN,
     KEY_DOMAIN,
     KEY_FULL_URL,
     KEY_FUNCTION
@@ -94,7 +94,7 @@ class Component(KBCEnvHandler):
         Lower chances of faulty user's configuration
         1. Validate parameters below:
             1. KEY_EMAIL
-            2. KEY_PASSWORD
+            2. KEY_API_TOKEN
             3. KEY_DOMAIN
         2. Validate if there are any input mappings
         """
@@ -106,7 +106,7 @@ class Component(KBCEnvHandler):
             error_message = 'Configurations are missing. Please configure your component.'
         elif params_obj[KEY_EMAIL] == '' and (params_obj[KEY_DOMAIN] == '' or params_obj[KEY_DOMAIN] == 'DOMAIN'):
             error_message = 'Configurations are missing. Please configure your component.'
-        elif params_obj[KEY_PASSWORD] == '' and params_obj[KEY_EMAIL] == '':
+        elif params_obj[KEY_API_TOKEN] == '' and params_obj[KEY_EMAIL] == '':
             error_message = 'Credentials are missing. Please enter your credentials.'
         elif params_obj[KEY_DOMAIN] == 'DOMAIN' or params_obj[KEY_DOMAIN] == '':
             error_message = 'Zendesk domain is missing. Please enter your domain'
@@ -138,7 +138,7 @@ class Component(KBCEnvHandler):
 
         # Creating input parameters as Component class parameters
         self.email = params_obj[KEY_EMAIL]
-        self.password = params_obj[KEY_PASSWORD]
+        self.api_token = params_obj[KEY_API_TOKEN]
         self.domain = params_obj[KEY_DOMAIN]
         self.full_url = params_obj[KEY_FULL_URL]
         self.function = params_obj[KEY_FUNCTION]
@@ -277,13 +277,12 @@ class Component(KBCEnvHandler):
 
         return tmp_log
 
-    def get_basic_auth(self, email, password):
+    def get_basic_auth(self, email, api_token):
         '''
         Generating Base64 authentication header
         '''
 
-        # auth_string = '{}:{}'.format(email, password)
-        auth_string = '{}/token:{}'.format(email, password)
+        auth_string = '{}/token:{}'.format(email, api_token)
         auth_string_encode = base64.b64encode(auth_string.encode()).decode()
 
         header = {
@@ -403,7 +402,7 @@ class Component(KBCEnvHandler):
         self.validate_config_params(
             params_obj=params, in_tables=in_table_names)
         # Constructing request header
-        self.request_header = self.get_basic_auth(self.email, self.password)
+        self.request_header = self.get_basic_auth(self.email, self.api_token)
 
         logging.info('Selected function: {}'.format(self.function))
         # Looping through the endpoints (input files)

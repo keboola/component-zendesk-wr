@@ -3,7 +3,7 @@
     "title": "Configuration",
     "required": [
         "email",
-        "#password",
+        "#api_token",
         "domain",
         "full_url",
         "function"
@@ -15,9 +15,9 @@
             "propertyOrder": 100,
             "minLength": 1
         },
-        "#password": {
+        "#api_token": {
             "type": "string",
-            "title": "Password",
+            "title": "API token",
             "format": "password",
             "propertyOrder": 200,
             "minLength": 1

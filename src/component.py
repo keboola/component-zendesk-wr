@@ -87,6 +87,19 @@ class Component(KBCEnvHandler):
             logging.error(e)
             exit(1)
 
+    def test_credentials(self):
+        '''
+        Testing input credentials
+        '''
+
+        endpoint_url = '{}/api/v2/{}.json'.format(self.full_url, 'users')
+        r = requests.get(url=endpoint_url, headers=self.request_header)
+
+        if r.status_code not in [200, 201]:
+            logging.error(r.json()['error'])
+            logging.error('Please validate your credentials')
+            sys.exit(1)
+
     def validate_config_params(self, params_obj, in_tables):
         """
         Injecting input parameter into Component's class
@@ -403,6 +416,9 @@ class Component(KBCEnvHandler):
             params_obj=params, in_tables=in_table_names)
         # Constructing request header
         self.request_header = self.get_basic_auth(self.email, self.api_token)
+
+        # Testing input credentials
+        self.test_credentials()
 
         logging.info('Selected function: {}'.format(self.function))
         # Looping through the endpoints (input files)

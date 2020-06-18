@@ -1,5 +1,3 @@
-# Keboola Zendesk Writer
-
 Zendesk Writer enables users to create/update Zendesk Support API properties with the flexibility of defining their own parameters.
 
 To configure the writer, you need:

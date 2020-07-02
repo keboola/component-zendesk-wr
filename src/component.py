@@ -431,6 +431,10 @@ class Component(KBCEnvHandler):
 
             # Parsing requests in chunks to converse memory capacity
             for chunks in pd.read_csv(DEFAULT_TABLE_SOURCE+table, chunksize=100):
+                # Break for loop if input file is empty
+                if len(chunks) == 0:
+                    logging.info(f'[{table}] is empty. Passing...')
+                    break
                 log = []
                 input_headers = list(chunks.columns)
                 # Validate Input files headers

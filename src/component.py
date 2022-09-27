@@ -169,7 +169,7 @@ class Component(KBCEnvHandler):
         if not read_only or required:
             try:
                 if datatype_type in ('string', 'date'):
-                    tmp_obj[row_name] = str(row_value)
+                    tmp_obj[row_name] = "" if pd.isnull(row_value) else str(row_value)
                 elif datatype_type == 'array':
                     tmp_obj[row_name] = json.loads(row_value)
                 elif datatype_type == 'integer':
@@ -192,25 +192,20 @@ class Component(KBCEnvHandler):
         required_cols = endpoint_mapping[self.function.lower()+'_required']
         construct_bool = True
         request_body = {
-            # endpoint: []
             endpoint[:-1]: {}
         }
-        # for index, row in df.iterrows():
-        # row_json = {}
+
         for obj in df_headers:
             required = True if obj in required_cols and self.function == 'CREATE' else False
             tmp_obj, err_msg = self._convert_datatype(
                 datatype=endpoint_mapping['attributes'][obj],
                 row_name=obj,
-                # row_value=row[obj],
                 row_value=df[obj],
                 required=required)
             if err_msg != '':
                 construct_bool = False
                 return construct_bool, err_msg
             request_body[endpoint[:-1]].update(tmp_obj)
-        # if row_json:
-        #    request_body[endpoint].append(row_json)
 
         return construct_bool, request_body
 
@@ -235,7 +230,6 @@ class Component(KBCEnvHandler):
                 endpoint, required_cols)
             logging.error(err_msg)
             validate_bool = False
-            # sys.exit(1)
 
         # Check if input columns exist as an available attribute
         if validate_bool:
@@ -252,7 +246,6 @@ class Component(KBCEnvHandler):
                     endpoint, non_exist_attributes)
                 logging.error(err_msg)
                 validate_bool = False
-                # sys.exit(1)
 
         return validate_bool, err_msg
 
@@ -269,13 +262,9 @@ class Component(KBCEnvHandler):
 
         tmp_log = {
             'request_date': NOW,
-            # 'file_validation': '',
-            # 'file_validation_description': '',
             'request_bool': request_bool,
             'request_status': request_status,
-            # 'request_body': json.dumps(request_body[endpoint[:-1]])
             'request_body': json.dumps(request_body)
-            # 'request_response': json.dumps(request_response[endpoint[:-1]])
         }
         if request_status in [200, 201]:
             tmp_log['request_response'] = json.dumps(
@@ -471,7 +460,7 @@ class Component(KBCEnvHandler):
                             endpoint=endpoint,
                             endpoint_mapping=endpoint_mapping)
 
-                        # Vaidate if request body is constructed
+                        # Validate if request body is constructed
                         if body_construct_bool:
                             # Zendesk request
                             request_status, request_response = self.post_request(

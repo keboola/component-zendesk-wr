@@ -67,10 +67,6 @@ if 'KBC_LOGGER_ADDR' in os.environ and 'KBC_LOGGER_PORT' in os.environ:
 APP_VERSION = '0.0.2'
 
 
-class ZendeskWriterException(Exception):
-    pass
-
-
 class Component(KBCEnvHandler):
 
     def __init__(self, debug=False):

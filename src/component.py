@@ -399,15 +399,15 @@ class Component(KBCEnvHandler):
 
     def request(self, url, payload):
         try:
-            status_code, response = self._request(url, payload)
+            status_code, response = self._try_request(url, payload)
         except requests.exceptions.RequestException as e:
-            logging.error(f"Request error for url {url}: {e}")
+            logging.error(f"Request error for url {url} with payload {payload}: {e}")
             exit(1)
 
         return status_code, response
 
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
-    def _request(self, url, payload) -> tuple:
+    def _try_request(self, url, payload) -> tuple:
         """
         Generic Zendesk Post request
         """
@@ -420,13 +420,7 @@ class Component(KBCEnvHandler):
 
         r.raise_for_status()
 
-        try:
-            json_data = r.json()
-        except JSONDecodeError as e:
-            logging.error(f"Cannot parse response from url {url}: {e}")
-            exit(1)
-
-        return r.status_code, json_data
+        return r.status_code, r.json()
 
     def get_tables(self, tables, mapping):
         """

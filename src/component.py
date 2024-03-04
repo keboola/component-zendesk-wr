@@ -401,7 +401,7 @@ class Component(KBCEnvHandler):
         try:
             status_code, response = self._request(url, payload)
         except requests.exceptions.RequestException as e:
-            logging.error(f"Request error: {e}")
+            logging.error(f"Request error for url {url}: {e}")
             exit(1)
 
         return status_code, response

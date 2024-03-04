@@ -407,7 +407,7 @@ class Component(KBCEnvHandler):
         return status_code, response
 
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
-    def _request(self, url, payload):
+    def _request(self, url, payload) -> tuple:
         """
         Generic Zendesk Post request
         """

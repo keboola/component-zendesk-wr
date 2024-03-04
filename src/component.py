@@ -14,7 +14,6 @@ import json
 import pandas as pd
 import backoff
 
-from json.decoder import JSONDecodeError
 from datetime import datetime  # noqa
 
 from kbc.env_handler import KBCEnvHandler

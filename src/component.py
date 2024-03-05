@@ -8,11 +8,13 @@ import logging_gelf.handlers
 import logging_gelf.formatters
 import sys
 import os
-from datetime import datetime  # noqa
 import requests
 import base64
 import json
 import pandas as pd
+import backoff
+
+from datetime import datetime  # noqa
 
 from kbc.env_handler import KBCEnvHandler
 from kbc.result import KBCTableDef  # noqa
@@ -86,6 +88,106 @@ class Component(KBCEnvHandler):
         except ValueError as e:
             logging.error(e)
             exit(1)
+
+    def run(self):
+        '''
+        Main execution code
+        '''
+
+        # Get proper list of tables
+        in_tables = self.configuration.get_input_tables()
+        in_table_names = self.get_tables(in_tables, 'input_mapping')
+        logging.info("IN tables mapped: "+str(in_table_names))
+
+        params = self.cfg_params  # noqa
+        # Validating and assigning input parameters
+        self.validate_config_params(
+            params_obj=params, in_tables=in_table_names)
+        # Constructing request header
+        self.request_header = self.get_basic_auth(self.email, self.api_token)
+
+        # Testing input credentials
+        self.test_credentials()
+
+        logging.info('Selected function: {}'.format(self.function))
+        # Looping through the endpoints (input files)
+        for table in in_table_names:
+            logging.info('Parsing {}...'.format(table))
+
+            endpoint = table.split('.csv')[0].lower()
+            endpoint_mapping = self.endpoint_mapping[endpoint]
+            endpoint_url = '{}/api/v2/{}.json'.format(self.full_url, endpoint)
+
+            # Parsing requests in chunks to converse memory capacity
+            for chunks in pd.read_csv(DEFAULT_TABLE_SOURCE+table, chunksize=100):
+                # Break for loop if input file is empty
+                if len(chunks) == 0:
+                    logging.info(f'[{table}] is empty. Passing...')
+                    break
+                log = []
+                input_headers = list(chunks.columns)
+                # Validate Input files headers
+                input_valid_bool, err_msg = self._validate_endpoint_headers(
+                    endpoint=endpoint,
+                    input_headers=input_headers,
+                    endpoint_mapping=endpoint_mapping)
+
+                # Break for loop if input file is not valid
+                if not input_valid_bool:
+                    tmp_log = self._construct_log(
+                        endpoint=endpoint,
+                        request_bool=False,
+                        request_body=err_msg
+                    )
+                    log.append(tmp_log)
+                    # Breaking current's endpoint for loop
+                    # and Output the log for the current table
+                    self.output_log(log, endpoint)
+                    break
+
+                else:
+                    for index, row in chunks.iterrows():
+                        if self.function == 'CREATE':
+                            request_url = endpoint_url
+                        elif self.function == 'UPDATE':
+                            request_url = endpoint_url.replace(
+                                '.json', '/{}.json'.format(row['id']))
+
+                        # Construct request body
+                        body_construct_bool, request_body = self._construct_request_body(
+                            df=row,
+                            df_headers=input_headers,
+                            endpoint=endpoint,
+                            endpoint_mapping=endpoint_mapping)
+
+                        # Validate if request body is constructed
+                        if body_construct_bool:
+                            # Zendesk request
+                            request_status, request_response = self.request(
+                                url=request_url, payload=request_body)
+
+                            # Outputting log
+                            tmp_log = self._construct_log(
+                                endpoint=endpoint,
+                                request_bool=True,
+                                request_status=request_status,
+                                request_body=request_body[endpoint[:-1]],
+                                request_response=request_response,
+                                row_df=row
+                            )
+                        else:
+                            tmp_log = self._construct_log(
+                                endpoint=endpoint,
+                                request_bool=False,
+                                request_body=request_body[endpoint[:-1]],
+                                row_df=row
+                            )
+
+                        log.append(tmp_log)
+
+                self.output_log(log, endpoint)
+
+        logging.info("Zendesk Writer finished")
 
     def test_credentials(self):
         '''
@@ -294,17 +396,28 @@ class Component(KBCEnvHandler):
 
         return header
 
-    def post_request(self, url, payload):
-        '''
-        Generic Zendesk Post request
-        '''
+    def request(self, url, payload):
+        try:
+            status_code, response = self._try_request(url, payload)
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Request error for url {url} with payload {payload}: {e}")
+            exit(1)
 
+        return status_code, response
+
+    @backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
+    def _try_request(self, url, payload) -> tuple:
+        """
+        Generic Zendesk Post request
+        """
         if self.function == 'CREATE':
             r = requests.post(url, headers=self.request_header,
                               data=json.dumps(payload))
         elif self.function == 'UPDATE':
             r = requests.put(url, headers=self.request_header,
                              data=json.dumps(payload))
+
+        r.raise_for_status()
 
         return r.status_code, r.json()
 
@@ -388,106 +501,6 @@ class Component(KBCEnvHandler):
             json.dump(manifest_template, file_out)
             logging.info(
                 "Output manifest file [{}] produced.".format(output_manifest))
-
-    def run(self):
-        '''
-        Main execution code
-        '''
-
-        # Get proper list of tables
-        in_tables = self.configuration.get_input_tables()
-        in_table_names = self.get_tables(in_tables, 'input_mapping')
-        logging.info("IN tables mapped: "+str(in_table_names))
-
-        params = self.cfg_params  # noqa
-        # Validating and assigning input parameters
-        self.validate_config_params(
-            params_obj=params, in_tables=in_table_names)
-        # Constructing request header
-        self.request_header = self.get_basic_auth(self.email, self.api_token)
-
-        # Testing input credentials
-        self.test_credentials()
-
-        logging.info('Selected function: {}'.format(self.function))
-        # Looping through the endpoints (input files)
-        for table in in_table_names:
-            logging.info('Parsing {}...'.format(table))
-
-            endpoint = table.split('.csv')[0].lower()
-            endpoint_mapping = self.endpoint_mapping[endpoint]
-            endpoint_url = '{}/api/v2/{}.json'.format(self.full_url, endpoint)
-
-            # Parsing requests in chunks to converse memory capacity
-            for chunks in pd.read_csv(DEFAULT_TABLE_SOURCE+table, chunksize=100):
-                # Break for loop if input file is empty
-                if len(chunks) == 0:
-                    logging.info(f'[{table}] is empty. Passing...')
-                    break
-                log = []
-                input_headers = list(chunks.columns)
-                # Validate Input files headers
-                input_valid_bool, err_msg = self._validate_endpoint_headers(
-                    endpoint=endpoint,
-                    input_headers=input_headers,
-                    endpoint_mapping=endpoint_mapping)
-
-                # Break for loop if input file is not valid
-                if not input_valid_bool:
-                    tmp_log = self._construct_log(
-                        endpoint=endpoint,
-                        request_bool=False,
-                        request_body=err_msg
-                    )
-                    log.append(tmp_log)
-                    # Breaking current's endpoint for loop
-                    # and Output the log for the current table
-                    self.output_log(log, endpoint)
-                    break
-
-                else:
-                    for index, row in chunks.iterrows():
-                        if self.function == 'CREATE':
-                            request_url = endpoint_url
-                        elif self.function == 'UPDATE':
-                            request_url = endpoint_url.replace(
-                                '.json', '/{}.json'.format(row['id']))
-
-                        # Construct request body
-                        body_construct_bool, request_body = self._construct_request_body(
-                            df=row,
-                            df_headers=input_headers,
-                            endpoint=endpoint,
-                            endpoint_mapping=endpoint_mapping)
-
-                        # Validate if request body is constructed
-                        if body_construct_bool:
-                            # Zendesk request
-                            request_status, request_response = self.post_request(
-                                url=request_url, payload=request_body)
-
-                            # Outputting log
-                            tmp_log = self._construct_log(
-                                endpoint=endpoint,
-                                request_bool=True,
-                                request_status=request_status,
-                                request_body=request_body[endpoint[:-1]],
-                                request_response=request_response,
-                                row_df=row
-                            )
-                        else:
-                            tmp_log = self._construct_log(
-                                endpoint=endpoint,
-                                request_bool=False,
-                                request_body=request_body[endpoint[:-1]],
-                                row_df=row
-                            )
-
-                        log.append(tmp_log)
-
-                self.output_log(log, endpoint)
-
-        logging.info("Zendesk Writer finished")
 
 
 """

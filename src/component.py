@@ -27,6 +27,7 @@ KEY_API_TOKEN = '#api_token'
 KEY_DOMAIN = 'domain'
 KEY_FULL_URL = 'full_url'
 KEY_FUNCTION = 'function'
+KEY_CONTINUE_ON_ERROR = 'continue_on_error'
 
 MANDATORY_PARS = [
     KEY_EMAIL,
@@ -257,6 +258,8 @@ class Component(KBCEnvHandler):
         self.domain = params_obj[KEY_DOMAIN]
         self.full_url = params_obj[KEY_FULL_URL]
         self.function = params_obj[KEY_FUNCTION]
+        # Set continue_on_error (default False for backward compatibility)
+        self.continue_on_error = params_obj.get(KEY_CONTINUE_ON_ERROR, False)
 
     def _convert_datatype(self, datatype, row_name, row_value, required):
         '''
@@ -400,8 +403,15 @@ class Component(KBCEnvHandler):
         try:
             status_code, response = self._try_request(url, payload)
         except requests.exceptions.RequestException as e:
-            logging.error(f"Request error for url {url} with payload {payload}: {e}")
-            exit(1)
+            error_msg = f"Request error for url {url} with payload {payload}: {e}"
+            logging.warning(error_msg)
+
+            # If continue_on_error is disabled, component will exit
+            if not self.continue_on_error:
+                logging.info("'Continue on error' feature is disabled, component will exit")
+                exit(1)
+            # If continue_on_error is enabled, return the original error
+            return e.response.status_code if hasattr(e, 'response') else 0, {'error': error_msg}
 
         return status_code, response
 

@@ -408,7 +408,7 @@ class Component(KBCEnvHandler):
 
             # If continue_on_error is disabled, component will exit
             if not self.continue_on_error:
-                logging.info("'Continue on error' feature is disabled, component will exit")
+                logging.error("'Continue on error' feature is disabled, component will exit")
                 exit(1)
             # If continue_on_error is enabled, return the original error
             return e.response.status_code if hasattr(e, 'response') else 0, {'error': error_msg}

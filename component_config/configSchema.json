@@ -54,6 +54,13 @@
                 ]
             },
             "default": "CREATE"
+        },
+        "continue_on_error": {
+            "type": "boolean",
+            "title": "Continue on Error",
+            "propertyOrder": 600,
+            "description": "Marks, if the writer should continue writing data, if an error with any record occured.",
+            "default": false
         }
     }
 }
